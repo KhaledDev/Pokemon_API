@@ -1,16 +1,73 @@
 document.addEventListener("DOMContentLoaded", function() {
     
-    // helper function to remove redundant code
-    function animate_button(button){
-        button.style.transition = "transform 0.2s ease-in-out";
-        button.addEventListener("mouseover", function() {
-            button.style.transform = "scale(1.1)";
-        });
-        button.addEventListener("mouseout", function() {
-            button.style.transform = "scale(1)";
-        });
-    }
+    /*
+        pokemon names.
+    */
+    const pokemonNames = `bulbasaur
+ivysaur
+venusaur
+charmander
+charmeleon
+charizard
+squirtle
+wartortle
+blastoise
+caterpie
+metapod
+butterfree
+weedle
+kakuna
+beedrill
+pidgey
+pidgeotto
+pidgeot
+rattata
+raticate
+spearow
+fearow
+ekans
+arbok
+pikachu
+raichu
+sandshrew
+sandslash
+nidoran♀
+nidorina
+nidoqueen
+nidoran♂
+nidorino
+nidoking
+clefairy
+clefable
+vulpix
+ninetales
+jigglypuff
+wigglytuff
+zubat
+golbat
+oddish
+gloom
+vileplume
+paras
+parasect
+venonat
+venomoth
+diglett`;
+
+    /*
+        get the main pokemon list element
+    */
+    const pokemonList = document.getElementById("pokemon-list");
+    /*
+        get the pokemon names and split them into an array
+    */
+    const pokemonArray = pokemonNames.split("\n");
+    let delay = 0;
     
+    /*
+        create the modal template and add it to the body, we will use this modal to show the pokemon
+        details such as name, image, types and abilities when the user clicks the "Show Details" button on each pokemon card.
+    */
     const modal_template = `
         <div id="details-modal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000;">
             <div id="modal-content" style="background-color: rgba(26, 23, 23, 0.7); display: block; position: fixed; top: 50%; left: 50%; width: 450px; height: auto; transform: translate(-50%, -50%); padding: 20px; border-radius: 10px;">
@@ -23,20 +80,52 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         </div>
     `;
-
-    document.body.insertAdjacentHTML("beforeend", modal_template);
-
+    
+    /*
+        current active model, to know when to close it when the user clicks the close button, and to clear the abilities grid when closing the modal.
+    */
     let current_model = null;
-
+    
+    /*
+        Helper function to animate buttons, smooth ease in out scaling on hover.
+        
+        @param {HTMLButtonElement} button - the button to animate
+    */
+    function animate_button(button){
+        button.style.transition = "transform 0.2s ease-in-out";
+        button.addEventListener("mouseover", function() {
+            button.style.transform = "scale(1.1)";
+        });
+        button.addEventListener("mouseout", function() {
+            button.style.transform = "scale(1)";
+        });
+    }
+    
+    /*
+        function to create the pokemon card, each card will show the pokemon name and image, and a button to show the details in a modal.
+        
+        @param {Object} pokemonData - the pokemon data object returned from the API, contains all info needed.
+        @returns {HTMLLIElement} - the created pokemon card element to be added to the pokemon list.
+    */
     function create_Card(pokemonData){
 
+        /*
+            pokemon card template, each card will show the pokemon name and image, and a button to show the details in a modal.
+        */
         const pokemonItem = document.createElement("li");
         pokemonItem.classList.add("pokemon-item");
         pokemonItem.textContent = pokemonData.name;
         pokemonItem.style.listStyle = "none";
+        
+        /*
+            container to hold information
+        */
         const pokemonItemDev = document.createElement("div");
         pokemonItem.appendChild(pokemonItemDev);
 
+        /*
+            details button, when clicked will show the modal with the pokemon details such as name, image, types and abilities.
+        */
         const button = document.createElement("button");
         button.textContent = "Show Details";
         button.classList.add("details-button");
@@ -93,7 +182,10 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
         });
-
+        
+        /*
+            Pokemon image
+        */
         const img = document.createElement("img");
         img.src = pokemonData.sprites.front_default;
         img.style.height = "128px";
@@ -102,61 +194,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return pokemonItem;
     }
 
-    const pokemonNames = `bulbasaur
-ivysaur
-venusaur
-charmander
-charmeleon
-charizard
-squirtle
-wartortle
-blastoise
-caterpie
-metapod
-butterfree
-weedle
-kakuna
-beedrill
-pidgey
-pidgeotto
-pidgeot
-rattata
-raticate
-spearow
-fearow
-ekans
-arbok
-pikachu
-raichu
-sandshrew
-sandslash
-nidoran♀
-nidorina
-nidoqueen
-nidoran♂
-nidorino
-nidoking
-clefairy
-clefable
-vulpix
-ninetales
-jigglypuff
-wigglytuff
-zubat
-golbat
-oddish
-gloom
-vileplume
-paras
-parasect
-venonat
-venomoth
-diglett`;
-
-
-    const pokemonList = document.getElementById("pokemon-list");
-    const pokemonArray = pokemonNames.split("\n");
-    let delay = 0;
+    document.body.insertAdjacentHTML("beforeend", modal_template);
 
     for (const name of pokemonArray){
         setTimeout(() => {
